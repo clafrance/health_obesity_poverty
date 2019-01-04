@@ -1,7 +1,7 @@
 // https://github.com/d3/d3/blob/master/CHANGES.md
 
-let svgWidth = 1200;
-let svgHeight = 800;
+let svgWidth = 960;
+let svgHeight = 600;
 
 let margin = {
   top: 60,
@@ -62,8 +62,8 @@ let circleGroupNode = circleGroup.append("circle")
 			.attr("opacity", "0.5");
 
 	circleGroup.append("text")
-			.attr("x", d => xLinearScale(d.poverty-0.1))
-			.attr("y", d => yLinearScale(d.obesity-0.1))
+			.attr("x", d => xLinearScale(d.poverty-0.14))
+			.attr("y", d => yLinearScale(d.obesity-0.14))
 			.attr('dx', 1)
 			.text( function (d) { return d.abbr; })
 			.attr("font-size", "10px")
@@ -80,7 +80,8 @@ let circleGroupNode = circleGroup.append("circle")
 
   // x axis  
   chartGroup.append("text")
-    .attr("transform", `translate(${(svgWidth/2)-180}, 700)`)
+    // .attr("transform", `translate(${(svgWidth/2)-180}, 700)`)
+    .attr("transform", `translate(${svgWidth/2 - 100}, 500)`)
     .attr("class", "axisText")
     .text("In Poverty (%)");
 
