@@ -20,11 +20,9 @@ let svg = d3.select("#scatter")
 			.append("svg")
 			.attr("width", svgWidth)
 			.attr("height", svgHeight);
-			// .attr("style", "outline: thin solid red;");
 
 let chartGroup = svg.append("g")
 			.attr("transform", `translate(${margin.left}, ${margin.top})`);
-			// .attr("style", "outline: thin solid blue;");
 
 d3.csv("data/data.csv").then(function(health_data) {
 	health_data.forEach(function(data) {
@@ -69,7 +67,7 @@ let circleGroupNode = circleGroup.append("circle")
 			.attr("font-size", "10px")
 			.style("fill", "white");
 
-	// Y axis
+	// Y axis label
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
@@ -78,12 +76,14 @@ let circleGroupNode = circleGroup.append("circle")
     .attr("class", "axisText")
     .text("Obesity Rate (%)");
 
-  // x axis  
+  // x axis label
   chartGroup.append("text")
     // .attr("transform", `translate(${(svgWidth/2)-180}, 700)`)
     .attr("transform", `translate(${svgWidth/2 - 100}, 500)`)
     .attr("class", "axisText")
     .text("In Poverty (%)");
+
+  // Tooltip
 
 	let toolTip = d3.tip()
 			.attr("class", "tooltip")
@@ -95,7 +95,11 @@ let circleGroupNode = circleGroup.append("circle")
 
 	chartGroup.call(toolTip);
 
-	circleGroupNode.on("click", function(data) {
+	circleGroupNode
+	.on("click", function(data) {
+    toolTip.show(data, this);
+  })
+	.on("mouseover", function(data) {
     toolTip.show(data, this);
   })
   .on("mouseout", function(data, index) {
