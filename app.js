@@ -1,5 +1,6 @@
 // https://github.com/d3/d3/blob/master/CHANGES.md
 
+// Set svg size
 let svgWidth = 960;
 let svgHeight = 600;
 
@@ -13,32 +14,33 @@ let margin = {
 let chartWidth = svgWidth - margin.left - margin.right;
 let chartHeight = svgHeight - margin.top - margin.bottom;
 
-console.log(chartWidth);
-console.log(chartHeight);
-
+// Create svg tag
 let svg = d3.select("#scatter")
 			.append("svg")
 			.attr("width", svgWidth)
 			.attr("height", svgHeight);
 
+// Create g tag
 let chartGroup = svg.append("g")
 			.attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+// Load data from csv file using d3.csv
 d3.csv("data/data.csv").then(function(health_data) {
 	health_data.forEach(function(data) {
 		data.poverty = +data.poverty;
 		data.obesity = +data.obesity;
 	});
 
+	// Set the scale for x axis using LinearScale
 	let xLinearScale = d3.scaleLinear()
 			.domain([8, d3.max(health_data, d => d.poverty+2)])
 			.range([0, chartWidth]);
+	let bottomAxis = d3.axisBottom(xLinearScale);
 
+	// Set the scale for y axis using LinearScale
 	let yLinearScale = d3.scaleLinear()
 			.domain([20, d3.max(health_data, d => d.obesity+2)])
 			.range([chartHeight, 0]);
-
-	let bottomAxis = d3.axisBottom(xLinearScale);
   let leftAxis = d3.axisLeft(yLinearScale);
 
 	chartGroup.append("g")
@@ -48,17 +50,20 @@ d3.csv("data/data.csv").then(function(health_data) {
 	chartGroup.append("g")
 		.call(leftAxis);
 
+	// Binding data
 	let circleGroup = chartGroup.selectAll("circle")
 			.data(health_data)
 			.enter();
 
-let circleGroupNode = circleGroup.append("circle")
+	// Create a circle for each data point
+	let circleGroupNode = circleGroup.append("circle")
 			.attr("cx", d => xLinearScale(d.poverty))
 			.attr("cy", d => yLinearScale(d.obesity))
 			.attr("r", "12")
 			.attr("fill", "blue")
 			.attr("opacity", "0.5");
 
+	// Add a state abbr to each circle
 	circleGroup.append("text")
 			.attr("x", d => xLinearScale(d.poverty-0.14))
 			.attr("y", d => yLinearScale(d.obesity-0.14))
@@ -67,7 +72,7 @@ let circleGroupNode = circleGroup.append("circle")
 			.attr("font-size", "10px")
 			.style("fill", "white");
 
-	// Y axis label
+	// Add label for Y axis
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
@@ -76,15 +81,13 @@ let circleGroupNode = circleGroup.append("circle")
     .attr("class", "axisText")
     .text("Obesity Rate (%)");
 
-  // x axis label
+  // Add label for x axis
   chartGroup.append("text")
-    // .attr("transform", `translate(${(svgWidth/2)-180}, 700)`)
     .attr("transform", `translate(${svgWidth/2 - 100}, 500)`)
     .attr("class", "axisText")
     .text("In Poverty (%)");
 
-  // Tooltip
-
+  // Define Tooltip
 	let toolTip = d3.tip()
 			.attr("class", "tooltip")
 			.offset([80, -60])
@@ -95,6 +98,7 @@ let circleGroupNode = circleGroup.append("circle")
 
 	chartGroup.call(toolTip);
 
+	// Show tooltip for each data point on mouse over or click
 	circleGroupNode
 	.on("click", function(data) {
     toolTip.show(data, this);
@@ -105,15 +109,4 @@ let circleGroupNode = circleGroup.append("circle")
   .on("mouseout", function(data, index) {
         toolTip.hide(data);
   });
-
 });
-
-
-
-
-
-
-// d3.csv("data/data.csv", function(error, data) {
-// 	 if (error) return console.warn(error);
-// 	 console.log(data);
-// });
